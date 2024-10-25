@@ -1,0 +1,11 @@
+faiss-cpu
+langchain
+openai
+sentence-transformers
+pdfplumber
+pandas
+numpy
+python-dotenv
+nltk
+flask
+markdown
