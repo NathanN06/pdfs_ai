@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import "./css/chat_bot.css"; // Import external CSS for styling
 
 import ReactDOM from "react-dom/client";
-import "./css/global.css"; // te
+import "./css/global.css"; //
 
 const ChatBot = () => {
   const [messages, setMessages] = useState([]);
