@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAG Bot</title>
+    <style>
+      /* Basic CSS styles */
+      body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background-color: #f7fafc; /* Light gray background */
+        margin: 0;
+      }
+      h1 {
+        text-align: center;
+        font-size: 2rem; /* Large heading */
+        color: #2d3748; /* Dark gray text */
+        margin: 1.25rem 0; /* Spacing */
+      }
+      #chat {
+        flex-grow: 1;
+        overflow-y: auto;
+        border: 1px solid #d2d6dc; /* Light gray border */
+        border-radius: 0.375rem; /* Rounded corners */
+        background-color: #c6f6d5; /* Light green background */
+        padding: 0.75rem; /* Padding */
+        margin-bottom: 0.5rem; /* Bottom spacing */
+      }
+      input {
+        border: 1px solid #d2d6dc; /* Light gray border */
+        border-radius: 0.375rem; /* Rounded corners */
+        padding: 0.5rem; /* Padding */
+        width: 100%;
+        margin-bottom: 0.5rem; /* Bottom spacing */
+      }
+      button {
+        background-color: #4299e1; /* Blue background */
+        color: white; /* White text */
+        border-radius: 0.375rem; /* Rounded corners */
+        padding: 0.5rem; /* Padding */
+        width: 100%;
+      }
+      button:hover {
+        background-color: #3182ce; /* Darker blue on hover */
+      }
+      .message {
+        margin: 0.5rem 0; /* Spacing between messages */
+      }
+      .user {
+        font-weight: bold; /* Bold text for user */
+        color: #4299e1; /* Blue text */
+      }
+      .bot {
+        color: #4a5568; /* Dark gray text */
+      }
+      .source {
+        font-style: italic; /* Italic for sources */
+        color: #718096; /* Gray text */
+      }
+      .error {
+        color: #f56565; /* Red text for errors */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>RAG Bot</h1>
+    <div id="chat"></div>
+    <form id="queryForm" style="padding: 0.5rem">
+      <input
+        type="text"
+        id="queryInput"
+        placeholder="Ask your question here..."
+        required
+      />
+      <button type="submit">Submit</button>
+    </form>
+
+    <script>
+      document
+        .getElementById("queryForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault(); // Prevent the form from submitting the default way
+
+          const query = document.getElementById("queryInput").value;
+          const chatDiv = document.getElementById("chat");
+
+          // Add user query to chat
+          chatDiv.innerHTML += `<div class="message user">You: ${query}</div>`;
+          document.getElementById("queryInput").value = ""; // Clear input
+
+          // Clear previous response
+          chatDiv.innerHTML += `<div class="message bot">Processing...</div>`;
+          chatDiv.scrollTop = chatDiv.scrollHeight; // Scroll to the bottom
+
+          try {
+            // Send the query to the Flask backend
+            const response = await fetch("/query", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ query: query }),
+            });
+
+            const data = await response.json();
+
+            // Handle errors and display response
+            if (data.error) {
+              chatDiv.innerHTML += `<div class="message bot error">Error: ${data.error}</div>`;
+            } else {
+              // Directly insert the response (which is already HTML) into the chat
+              chatDiv.innerHTML += `<div class="message bot"><strong>Response:</strong><br>${data.response}</div>`;
+              chatDiv.innerHTML += `<div class="message source"><strong>Sources:</strong><br>${data.sources}</div>`;
+            }
+          } catch (error) {
+            chatDiv.innerHTML += `<div class="message bot error">Error: ${error.message}</div>`;
+          }
+
+          // Scroll to the bottom only if the user is near the bottom of the chat
+          const isScrolledToBottom =
+            chatDiv.scrollHeight - chatDiv.clientHeight <=
+            chatDiv.scrollTop + 1;
+          if (isScrolledToBottom) {
+            chatDiv.scrollTop = chatDiv.scrollHeight; // Scroll to the bottom
+          }
+        });
+    </script>
+  </body>
+</html>
