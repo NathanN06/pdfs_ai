@@ -1,17 +1,11 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ["./src/**/*.{html,js}"],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-};
 const { fontFamily } = require("tailwindcss/defaultTheme");
 
-/** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class"],
-  content: ["./src/**/*.{html,js}"],
+  darkMode: ["class"], // Enables dark mode based on class
+  content: [
+    "./src/**/*.{html,js,jsx,ts,tsx}", // Covers all frontend files
+    "./node_modules/@shadcn/ui/components/**/*.{js,jsx,ts,tsx}", // Adjusted path for ShadCN components
+  ],
   theme: {
     container: {
       center: true,
@@ -57,8 +51,8 @@ module.exports = {
         },
       },
       borderRadius: {
-        lg: `var(--radius)`,
-        md: `calc(var(--radius) - 2px)`,
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
@@ -80,5 +74,10 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"), // Enables animations
+    require("@tailwindcss/forms"), // Optional for styling form elements
+    require("@tailwindcss/typography"), // Optional for rich text content
+    // No direct plugin is needed for ShadCN, it uses the Tailwind utilities directly
+  ],
 };

@@ -1,0 +1,64 @@
+/* src/css/chat_bot.css */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 20px;
+  background-color: #f7fafc;
+}
+
+.chat-box {
+  flex-grow: 1;
+  overflow-y: auto;
+  border: 1px solid #d2d6dc;
+  background-color: #ffffff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.message {
+  margin-bottom: 10px;
+}
+
+.message.user {
+  text-align: right;
+  color: #3182ce;
+  font-weight: bold;
+}
+
+.message.bot {
+  text-align: left;
+  color: #2d3748;
+}
+
+.message.source {
+  text-align: left;
+  font-style: italic;
+  color: #718096;
+}
+
+.query-form {
+  display: flex;
+}
+
+.query-form input {
+  flex-grow: 1;
+  border: 1px solid #d2d6dc;
+  padding: 10px;
+  margin-right: 10px;
+  border-radius: 5px;
+}
+
+.query-form button {
+  background-color: #4299e1;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.query-form button:hover {
+  background-color: #3182ce;
+}
