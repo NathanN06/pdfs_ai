@@ -3,6 +3,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Moon, Sun, Send } from "lucide-react";
+import { marked } from "marked";
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
@@ -43,10 +44,8 @@ const Chatbot = () => {
       const data = await response.json();
       console.log("Backend response:", data);
 
-      // Format the bot's response with line breaks and bold text as HTML
-      const formattedResponse = data.response
-        .replace(/\n\n/g, "<br /><br />") // Double newlines become paragraph breaks
-        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>"); // **text** becomes bold
+      // Parse the bot's response as Markdown to allow for formatted output
+      const formattedResponse = marked(data.response); // Just Markdown parsing, no extra <br /> tags
 
       const botResponse = {
         id: Date.now(),
@@ -108,14 +107,12 @@ const Chatbot = () => {
                     : "bg-white text-gray-900 dark:bg-gray-800 dark:text-white rounded-bl-none"
                 } shadow-lg transform transition-all duration-300 hover:scale-105`}
               >
-                {/* Render HTML for bot responses */}
+                {/* Render parsed HTML for bot responses */}
                 {message.sender === "bot" ? (
-                  <div>
-                    <p dangerouslySetInnerHTML={{ __html: message.text }}></p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                      <em>Source: {message.sources}</em>
-                    </p>
-                  </div>
+                  <div
+                    className="markdown-content"
+                    dangerouslySetInnerHTML={{ __html: message.text }}
+                  ></div>
                 ) : (
                   <p>{message.text}</p>
                 )}

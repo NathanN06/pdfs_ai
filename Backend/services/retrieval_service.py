@@ -16,8 +16,21 @@ def retrieve_documents(index, query_embedding, documents, k=5, nprobe=10):
     retrieved_docs = [documents[i] for i in indices[0] if 0 <= i < len(documents)]
     return retrieved_docs
 
+def generate_general_response(user_query, message_history):
+    prompt = f"Answer the following question as a general AI response:\n{user_query}"
+    full_message_history = message_history + [{"role": "user", "content": prompt}]
+    
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=full_message_history
+        )
+        return response.choices[0].message.content, "Bot"
+    except Exception as e:
+        print(f"Error generating general response: {e}")
+        return "There was an error processing your request. Please try again later.", "Bot"
+
 def generate_response(retrieved_docs, user_query, message_history):
-    # Handle basic commands with predefined responses
     normalized_query = user_query.strip().lower()
     quick_responses = {
         "hello": "Hello! How can I assist you today?",
@@ -28,14 +41,11 @@ def generate_response(retrieved_docs, user_query, message_history):
     }
 
     if normalized_query in quick_responses:
-        # Return predefined response if user query matches without using retrieved docs
         return quick_responses[normalized_query], "Bot"
 
-    # Organize context from retrieved documents
     context = "\n\n".join([doc[1] for doc in retrieved_docs])
     sources = ", ".join([doc[0] for doc in retrieved_docs])
 
-    # Enhanced prompt for structured and consistent responses
     prompt = (
         f"Given the following context:\n{context}\n\n"
         f"Answer the question: {user_query}\n\n"
@@ -43,12 +53,8 @@ def generate_response(retrieved_docs, user_query, message_history):
         "### Overview:\nA brief summary of the main points related to the query.\n\n"
         "### Detailed Response:\nUse bullet points, bold headers, and organized sections to answer the question thoroughly.\n\n"
         "### Additional Information (if relevant):\nAny extra details that might be useful to the user.\n\n"
-        "Make sure each section is clearly separated with headers and line breaks, "
-        "use bullet points or dashes for lists, and bold important headers or terms. "
-        "Conclude with a **Source(s):** section at the end listing the sources."
     )
 
-    # Format message history for consistency
     formatted_history = [
         {"role": "assistant" if msg["role"] == "bot" else msg["role"], "content": msg["content"]}
         for msg in message_history
@@ -56,50 +62,30 @@ def generate_response(retrieved_docs, user_query, message_history):
     full_message_history = formatted_history + [{"role": "user", "content": prompt}]
 
     try:
-        # OpenAI API call
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o-mini",
             messages=full_message_history
         )
-
-        # Extract response content
         response_text = response.choices[0].message.content
-
-        # Append source list to maintain consistency in layout
         formatted_response = (
             response_text +
             f"\n\n---\n**Source(s):** {sources}"
         )
-        
         return formatted_response, sources
-
     except Exception as e:
         print(f"Error generating response: {e}")
         return "There was an error processing your request. Please try again later.", sources
 
-
-# retrieval_service.py
-
 def handle_query(user_query, message_history, index_filename=INDEX_FILENAME, data_folder=DATA_FOLDER):
-    # Define quick responses for common phrases and greetings
-    normalized_query = user_query.strip().lower()
-    quick_responses = {
-        "hello": "Hello! How can I assist you today?",
-        "hi": "Hi there! How can I help?",
-        "help": "I'm here to assist you with any questions or information you need. Just ask!",
-        "thank you": "You're very welcome!",
-    }
+    context_keywords = ["based on documents", "with context", "refer to sources"]
+    use_context = any(keyword in user_query.lower() for keyword in context_keywords)
 
-    # Check if the query is a quick response
-    if normalized_query in quick_responses:
-        return quick_responses[normalized_query], "Bot"
+    if not use_context:
+        return generate_general_response(user_query, message_history)
 
-    # If no quick response is found, proceed with retrieval and response generation
     index = load_index(index_filename)
     documents = load_documents(data_folder)
-
     query_embedding = embed_query(user_query)
     retrieved_docs = retrieve_documents(index, query_embedding, documents)
 
-    response_text, sources = generate_response(retrieved_docs, user_query, message_history)
-    return response_text, sources
+    return generate_response(retrieved_docs, user_query, message_history)
