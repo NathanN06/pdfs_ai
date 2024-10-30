@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 def main():
     # Set the desired chunking strategy and size directly in the code
-    chunk_strategy = 'adaptive'  # Choose between 'token', 'semantic', 'adaptive', etc.
+    chunk_strategy = 'token'  # Choose between 'token', 'semantic', 'adaptive', etc.
     chunk_size = 512  # Adjust this value as needed for your use case
     
     # Create and save the index with the specified chunking strategy and size

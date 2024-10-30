@@ -1,4 +1,5 @@
 import nltk
+import re
 
 def chunk_text(text, max_length=512):
     """Original chunking method that splits text into chunks based on word count."""
@@ -60,12 +61,33 @@ def recursive_chunk_text(text, max_length):
 
     return chunks
 
-def chunk_by_paragraph(text):
-    """Splits the input text into chunks based on paragraph breaks."""
-    paragraphs = text.strip().split('\n\n')
+
+def chunk_by_paragraph(text, max_length=512):
+    """Attempts to chunk by paragraph, defaults to sentences if no paragraph markers are found."""
+    # Split by paragraphs first
+    paragraphs = re.split(r'\n\s*\n|\n{2,}|\r\n\r\n', text.strip())
     paragraphs = [para.strip() for para in paragraphs if para.strip()]
     
-    return paragraphs
+    # If only one large chunk was created, default to sentence-based chunking
+    if len(paragraphs) == 1:
+        print("No paragraphs detected; switching to sentence-based chunking.")
+        sentences = nltk.sent_tokenize(text)
+        chunks, current_chunk = [], []
+
+        # Accumulate sentences until reaching max_length
+        for sentence in sentences:
+            if len(" ".join(current_chunk) + sentence) > max_length:
+                chunks.append(" ".join(current_chunk))
+                current_chunk = []
+            current_chunk.append(sentence)
+        
+        # Append any remaining sentences
+        if current_chunk:
+            chunks.append(" ".join(current_chunk))
+        
+        return chunks
+    else:
+        return paragraphs
 
 def adaptive_chunk_text(text, default_max_length=512):
     """Adaptive chunking based on the content's complexity and structure."""

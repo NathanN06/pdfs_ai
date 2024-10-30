@@ -29,7 +29,7 @@ def generate_general_response(user_query, message_history):
     except Exception as e:
         print(f"Error generating general response: {e}")
         return "There was an error processing your request. Please try again later.", "Bot"
-
+    
 def generate_response(retrieved_docs, user_query, message_history):
     normalized_query = user_query.strip().lower()
     quick_responses = {
