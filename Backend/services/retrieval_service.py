@@ -18,17 +18,40 @@ def retrieve_documents(index, query_embedding, documents, k=10, nprobe=10):
     then refine relevance through reranking by keyword matching.
     """
     index.nprobe = nprobe
+    
+    # Ensure query_embedding has the shape (1, d)
+    if query_embedding.ndim == 1:
+        query_embedding = query_embedding.reshape(1, -1)
+    
     distances, indices = index.search(query_embedding, k)
     initial_retrieved_docs = [documents[i] for i in indices[0] if 0 <= i < len(documents)]
     
     # Rerank using combined embedding similarity and keyword matching
     return rerank_documents(initial_retrieved_docs, query_embedding)
 
-def rerank_documents(retrieved_docs, query_embedding):
+def retrieve_documents(index, query_embedding, documents, user_query, k=10, nprobe=10):
+    """
+    Retrieve the top k relevant documents based on embedding similarity,
+    then refine relevance through reranking by keyword matching.
+    """
+    index.nprobe = nprobe
+    
+    # Ensure query_embedding has the shape (1, d)
+    if query_embedding.ndim == 1:
+        query_embedding = query_embedding.reshape(1, -1)
+    
+    distances, indices = index.search(query_embedding, k)
+    initial_retrieved_docs = [documents[i] for i in indices[0] if 0 <= i < len(documents)]
+    
+    # Rerank using combined embedding similarity and keyword matching
+    return rerank_documents(initial_retrieved_docs, query_embedding, user_query)
+
+def rerank_documents(retrieved_docs, query_embedding, query_text):
     """
     Rerank documents by combining cosine similarity with keyword matching.
     """
-    keywords = set(query_embedding.strip().lower().split())  # Split query into keywords
+    # Extract keywords from the query text
+    keywords = set(query_text.strip().lower().split())  # Use query text, not embeddings
     reranked_docs = []
 
     for doc in retrieved_docs:
@@ -127,6 +150,7 @@ def handle_query(user_query, message_history, index_filename=INDEX_FILENAME, dat
     if not use_context:
         return generate_general_response(user_query, message_history)
 
+    # Load the FAISS index and documents
     index = load_index(index_filename)
     documents = load_documents(data_folder)
     
@@ -134,7 +158,7 @@ def handle_query(user_query, message_history, index_filename=INDEX_FILENAME, dat
     context_terms = ["economics", "themes", "Edexcel", "specification"]
     query_embedding = embed_query(user_query, additional_context=context_terms)
     
-    # Retrieve and rerank documents
-    retrieved_docs = retrieve_documents(index, query_embedding, documents)
+    # Retrieve and rerank documents, now passing user_query as well
+    retrieved_docs = retrieve_documents(index, query_embedding, documents, user_query)
 
     return generate_response(retrieved_docs, user_query, message_history)
