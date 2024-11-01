@@ -63,7 +63,7 @@ def test_semantic_coherence(chunks, embed_function):
 
 def test_retrieval_performance(index, documents, query, true_doc_ids, k=5, nprobe=10):
     query_embedding = embed_query(query)
-    retrieved_docs = retrieve_documents(index, query_embedding, documents, k, nprobe)
+    retrieved_docs = retrieve_documents(index, query_embedding, documents, query, k, nprobe)
     retrieved_doc_ids = [doc[0] for doc in retrieved_docs]  # Extract IDs of retrieved documents
     
     # Calculate recall and precision
@@ -127,6 +127,10 @@ def evaluate_chunking_methods(text, queries, true_docs, max_length=512):
 
 # Main execution block
 if __name__ == "__main__":
+    # Call the evaluate_chunking_methods function and print results
+    results = evaluate_chunking_methods(sample_text, test_queries, true_docs)
+    for result in results:
+        print(result)
     # Run the evaluation
     results = evaluate_chunking_methods(sample_text, test_queries, true_docs)
     

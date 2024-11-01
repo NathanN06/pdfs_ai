@@ -5,27 +5,36 @@ from services.embedding_service import embed_documents
 from services.document_loader import load_documents
 from config import DATA_FOLDER, INDEX_FILENAME
 
-def index_embeddings(embeddings, nlist=None):
+def index_embeddings(embeddings, nlist=None, index_type='IVFFlat'):
     """
-    Indexes embeddings using an IVF index.
+    Indexes embeddings using a specified FAISS index type.
 
     Args:
         embeddings (np.ndarray): Array of embeddings to index.
-        nlist (int): Number of clusters. If None, defaults to min(100, len(embeddings) // 2).
+        nlist (int): Number of clusters. Defaults to min(100, len(embeddings) // 2).
+        index_type (str): Type of FAISS index to use ('IVFFlat', 'IVFPQ', or 'IVFSQ').
 
     Returns:
-        faiss.IndexIVFFlat: The FAISS index with the embeddings added.
+        faiss.Index: The FAISS index with the embeddings added.
     """
     dimension = embeddings.shape[1]
     if nlist is None:
         nlist = min(100, len(embeddings) // 2)
 
     quantizer = faiss.IndexFlatL2(dimension)
-    index = faiss.IndexIVFFlat(quantizer, dimension, nlist, faiss.METRIC_L2)
+
+    if index_type == 'IVFFlat':
+        index = faiss.IndexIVFFlat(quantizer, dimension, nlist, faiss.METRIC_L2)
+    elif index_type == 'IVFPQ':
+        index = faiss.IndexIVFPQ(quantizer, dimension, nlist, 8)  # 8 subquantizers as an example
+    elif index_type == 'IVFSQ':
+        index = faiss.IndexIVFSQ(quantizer, dimension, nlist, faiss.METRIC_L2)
+    else:
+        raise ValueError(f"Unsupported index type: {index_type}")
+
     index.train(embeddings)
     index.add(embeddings)
     return index
-
 def save_index(index, filename=INDEX_FILENAME):
     """
     Saves the FAISS index to the specified file.
