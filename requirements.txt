@@ -1,3 +1,4 @@
+# Core dependencies
 faiss-cpu
 langchain
 openai
@@ -9,3 +10,9 @@ python-dotenv
 nltk
 flask
 markdown
+
+# Suggested additions
+scikit-learn  # For precision, recall, and cosine similarity metrics
+scipy         # Provides cosine similarity and other utilities
+tabulate      # Helpful for displaying tables, especially for results summary
+tqdm          # For progress bars, useful if you process large datasets

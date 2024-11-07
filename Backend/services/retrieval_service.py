@@ -7,72 +7,59 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from config import DATA_FOLDER, INDEX_FILENAME
 from sklearn.metrics.pairwise import cosine_similarity
+from sentence_transformers import CrossEncoder
 import numpy as np
 
+# Load environment variables and initialize OpenAI client
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-def retrieve_documents(index, query_embedding, documents, k=10, nprobe=10):
+# Initialize CrossEncoder reranking model
+rerank_model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
+
+def retrieve_documents(index, query_embedding, documents, user_query=None, k=10, nprobe=10):
     """
     Retrieve the top k relevant documents based on embedding similarity,
-    then refine relevance through reranking by keyword matching.
+    then refine relevance through reranking using the CrossEncoder model.
     """
     index.nprobe = nprobe
-    
+
     # Ensure query_embedding has the shape (1, d)
     if query_embedding.ndim == 1:
         query_embedding = query_embedding.reshape(1, -1)
-    
-    distances, indices = index.search(query_embedding, k)
+
+    # Step 1: Initial retrieval from FAISS (omit `distances` since it's not used)
+    _, indices = index.search(query_embedding, k)
     initial_retrieved_docs = [documents[i] for i in indices[0] if 0 <= i < len(documents)]
-    
-    # Rerank using combined embedding similarity and keyword matching
-    return rerank_documents(initial_retrieved_docs, query_embedding)
 
-def retrieve_documents(index, query_embedding, documents, user_query, k=10, nprobe=10):
-    """
-    Retrieve the top k relevant documents based on embedding similarity,
-    then refine relevance through reranking by keyword matching.
-    """
-    index.nprobe = nprobe
-    
-    # Ensure query_embedding has the shape (1, d)
-    if query_embedding.ndim == 1:
-        query_embedding = query_embedding.reshape(1, -1)
-    
-    distances, indices = index.search(query_embedding, k)
-    initial_retrieved_docs = [documents[i] for i in indices[0] if 0 <= i < len(documents)]
-    
-    # Rerank using combined embedding similarity and keyword matching
-    return rerank_documents(initial_retrieved_docs, query_embedding, user_query)
+    # Step 2: Apply reranking using the CrossEncoder model
+    if user_query and initial_retrieved_docs:
+        return rerank_with_model(initial_retrieved_docs, user_query)
+    else:
+        return initial_retrieved_docs
 
-def rerank_documents(retrieved_docs, query_embedding, query_text):
+def rerank_with_model(retrieved_docs, query_text):
     """
-    Rerank documents by combining cosine similarity with keyword matching.
+    Rerank documents using a CrossEncoder model.
+    
+    Args:
+        retrieved_docs (list): List of initially retrieved document chunks.
+        query_text (str): The original user query text.
+    
+    Returns:
+        list: The reranked documents based on model scores.
     """
-    # Extract keywords from the query text
-    keywords = set(query_text.strip().lower().split())  # Use query text, not embeddings
-    reranked_docs = []
-
-    for doc in retrieved_docs:
-        doc_text = doc[1].lower()
-        
-        # Keyword match score based on occurrences in the document text
-        keyword_score = sum(doc_text.count(keyword) for keyword in keywords)
-        
-        # Cosine similarity score between query embedding and document embedding
-        doc_embedding = embed_query(doc_text)
-        similarity_score = cosine_similarity(query_embedding, doc_embedding.reshape(1, -1))[0][0]
-        
-        # Combine similarity and keyword scores with weighting
-        combined_score = similarity_score + 0.1 * keyword_score
-        reranked_docs.append((doc, combined_score))
+    # Prepare inputs for the CrossEncoder (query, document) pairs
+    pairs = [(query_text, doc[1]) for doc in retrieved_docs]
     
-    # Sort by the combined score in descending order
-    reranked_docs = sorted(reranked_docs, key=lambda x: x[1], reverse=True)
+    # Generate reranking scores for each document
+    scores = rerank_model.predict(pairs)
     
-    # Return top k reranked documents
-    return [doc for doc, _ in reranked_docs[:5]]
+    # Combine documents with their scores and sort by descending score
+    reranked_docs = sorted(zip(retrieved_docs, scores), key=lambda x: x[1], reverse=True)
+    
+    # Return only the reranked documents
+    return [doc for doc, score in reranked_docs[:5]]
 
 def generate_general_response(user_query, message_history):
     """
@@ -147,18 +134,25 @@ def handle_query(user_query, message_history, index_filename=INDEX_FILENAME, dat
     context_keywords = ["based on documents", "with context", "refer to sources"]
     use_context = any(keyword in user_query.lower() for keyword in context_keywords)
 
+    # If no document context is required, generate a general AI response
     if not use_context:
         return generate_general_response(user_query, message_history)
 
     # Load the FAISS index and documents
     index = load_index(index_filename)
     documents = load_documents(data_folder)
-    
+
     # Add context terms to guide the embedding
     context_terms = ["economics", "themes", "Edexcel", "specification"]
     query_embedding = embed_query(user_query, additional_context=context_terms)
-    
-    # Retrieve and rerank documents, now passing user_query as well
+
+    # Retrieve and rerank documents using the CrossEncoder model
     retrieved_docs = retrieve_documents(index, query_embedding, documents, user_query)
 
+    # Check if any documents were retrieved, else return a fallback response
+    if not retrieved_docs:
+        print(f"No relevant documents found for query '{user_query}'. Returning default response.")
+        return "No relevant documents found", []
+
+    # Generate a response based on the retrieved documents
     return generate_response(retrieved_docs, user_query, message_history)

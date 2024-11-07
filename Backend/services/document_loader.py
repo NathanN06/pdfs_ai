@@ -1,12 +1,27 @@
+# document_loader.py
 import os
 import fitz  # PyMuPDF
 import json
-from utils.chunking import chunk_text, semantic_chunk_text, recursive_chunk_text,  adaptive_chunk_text, chunk_by_paragraph, chunk_by_tokens
+from utils.chunking import (
+    chunk_text, semantic_chunk_text, recursive_chunk_text, 
+    adaptive_chunk_text, chunk_by_paragraph, chunk_by_tokens
+)
 from config import DATA_FOLDER, INDEX_FILENAME
 
+def load_documents(data_folder, chunk_strategy='character', chunk_size=512, overlap=0, save_file="preprocessed_documents.json"):
+    """
+    Load and chunk documents from PDFs in the specified data folder using various chunking strategies.
 
+    Args:
+        data_folder (str): Path to the folder containing PDF files.
+        chunk_strategy (str): Chunking strategy to use ('character', 'semantic', 'recursive', 'adaptive', 'paragraph', 'token').
+        chunk_size (int): Maximum size of each chunk.
+        overlap (int): Number of overlapping characters between chunks (applies to certain chunking strategies).
+        save_file (str): File path to save the preprocessed chunks.
 
-def load_documents(data_folder, chunk_strategy='character', chunk_size=512, save_file="preprocessed_documents.json"):
+    Returns:
+        list: List of chunked document texts.
+    """
     documents = []
 
     if os.path.exists(save_file):
@@ -25,17 +40,17 @@ def load_documents(data_folder, chunk_strategy='character', chunk_size=512, save
 
             # Choose chunking strategy
             if chunk_strategy == 'semantic':
-                chunks = semantic_chunk_text(text, max_length=chunk_size)
+                chunks = semantic_chunk_text(text, max_length=chunk_size, overlap=overlap)
             elif chunk_strategy == 'recursive':
-                chunks = recursive_chunk_text(text, max_length=chunk_size)
+                chunks = recursive_chunk_text(text, max_length=chunk_size, overlap=overlap)
             elif chunk_strategy == 'adaptive':
-                chunks = adaptive_chunk_text(text, default_max_length=chunk_size)
+                chunks = adaptive_chunk_text(text, default_max_length=chunk_size, overlap=overlap)
             elif chunk_strategy == 'paragraph':
-                chunks = chunk_by_paragraph(text)
+                chunks = chunk_by_paragraph(text, max_length=chunk_size, overlap=overlap)
             elif chunk_strategy == 'token':
-                chunks = chunk_by_tokens(text, max_tokens=chunk_size)
+                chunks = chunk_by_tokens(text, max_tokens=chunk_size, overlap=overlap)
             else:
-                chunks = chunk_text(text, max_length=chunk_size)
+                chunks = chunk_text(text, max_length=chunk_size, overlap=overlap)
 
             for chunk in chunks:
                 documents.append((filename, chunk))
