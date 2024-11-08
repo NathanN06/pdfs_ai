@@ -1,0 +1,32 @@
+{
+    "character": {
+        "coherence": 0.592658418416977,
+        "redundancy": 0.31732823824722434,
+        "relevance (ROUGE-1)": 0.16389294766364695
+    },
+    "semantic": {
+        "coherence": 0.6838027715682984,
+        "redundancy": 0.31588072158803576,
+        "relevance (ROUGE-1)": 0.13969973110995487
+    },
+    "recursive": {
+        "coherence": 0.6797286629676819,
+        "redundancy": 0.30906369036316955,
+        "relevance (ROUGE-1)": 0.13915354107280914
+    },
+    "adaptive": {
+        "coherence": 0.13827896118164062,
+        "redundancy": 0.1380890685688852,
+        "relevance (ROUGE-1)": 0.1664468508491777
+    },
+    "paragraph": {
+        "coherence": 0.6749969124794006,
+        "redundancy": 0.3683209452765201,
+        "relevance (ROUGE-1)": 0.14631542807153877
+    },
+    "token": {
+        "coherence": 0.08581563234329223,
+        "redundancy": 0.12357836177383699,
+        "relevance (ROUGE-1)": 0.1664668042911464
+    }
+}

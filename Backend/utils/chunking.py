@@ -1,40 +1,56 @@
 import nltk
 import re
+import numpy as np
+from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
-def chunk_text(text, max_length=512, overlap=50):
-    """Character-based chunking method that splits text into chunks based on a maximum character count without splitting words."""
+embedding_model = SentenceTransformer("all-MiniLM-L6-v2")  # Load sentence embedding model
+
+def calculate_sentence_similarity(sent1, sent2):
+    emb1 = embedding_model.encode(sent1)
+    emb2 = embedding_model.encode(sent2)
+    return cosine_similarity([emb1], [emb2])[0][0]
+
+def dynamic_overlap(sentences, default_overlap, threshold=0.7):
+    overlap = []
+    for i in range(1, default_overlap + 1):
+        if i < len(sentences) and calculate_sentence_similarity(sentences[-1], sentences[-i]) > threshold:
+            overlap.append(sentences[-i])
+    return overlap
+
+def chunk_text(text, max_length=650, default_overlap=3):
     words = text.split()
     chunks = []
-    current_chunk = ""
+    current_chunk = []
 
     for word in words:
-        if len(current_chunk) + len(word) + 1 <= max_length:
-            current_chunk += (" " + word) if current_chunk else word
+        current_word_count = sum(len(w) + 1 for w in current_chunk)
+        if current_word_count + len(word) <= max_length:
+            current_chunk.append(word)
         else:
-            chunks.append(current_chunk)
-            current_chunk = " ".join(current_chunk.split()[-overlap:]) + " " + word
+            overlap = current_chunk[-default_overlap:]
+            chunks.append(" ".join(current_chunk))
+            current_chunk = overlap + [word]
 
     if current_chunk:
-        chunks.append(current_chunk)
+        chunks.append(" ".join(current_chunk))
 
     return chunks
 
-def semantic_chunk_text(text, max_length=512, overlap=50):
-    """Chunk text semantically using sentence tokenization while preserving sentence boundaries and semantic coherence."""
+def semantic_chunk_text(text, max_length=600, default_overlap=3):
     sentences = nltk.sent_tokenize(text)
     chunks = []
     current_chunk = []
     current_length = 0
 
-    for sentence in sentences:
-        sentence_length = len(sentence)
-        if current_length + sentence_length <= max_length or not current_chunk:
+    for i, sentence in enumerate(sentences):
+        if current_length + len(sentence) <= max_length:
             current_chunk.append(sentence)
-            current_length += sentence_length + 1
+            current_length += len(sentence) + 1
         else:
+            overlap = dynamic_overlap(current_chunk, default_overlap)
             chunks.append(" ".join(current_chunk))
-            current_chunk = current_chunk[-overlap:] + [sentence]
+            current_chunk = overlap + [sentence]
             current_length = sum(len(s) for s in current_chunk)
 
     if current_chunk:
@@ -42,49 +58,39 @@ def semantic_chunk_text(text, max_length=512, overlap=50):
 
     return chunks
 
-def recursive_chunk_text(text, max_length=512, min_length=100, depth=0, max_depth=5, overlap=50):
-    """Recursively chunk text into segments with adaptive splitting to maintain coherence and minimize recursion."""
-    # Base case: if text length is within limits or max recursion depth reached
+def recursive_chunk_text(text, max_length=600, min_length=250, depth=0, max_depth=4, default_overlap=3):
     if len(text) <= max_length or depth >= max_depth:
         return [text]
 
-    # Tokenize sentences only once
     sentences = nltk.sent_tokenize(text)
     chunks = []
     current_chunk = []
-    current_length = 0  # Track length to avoid repeated sum calls
+    current_length = 0
 
     for sentence in sentences:
-        sentence_length = len(sentence)
-        if current_length + sentence_length <= max_length:
+        if current_length + len(sentence) <= max_length:
             current_chunk.append(sentence)
-            current_length += sentence_length + 1  # +1 accounts for space between sentences
+            current_length += len(sentence) + 1
         else:
-            # Ensure the chunk meets the minimum length
-            if current_length < min_length:
-                current_chunk.append(sentence)
-                current_length += sentence_length + 1
-            # Finalize current chunk
-            chunks.append(" ".join(current_chunk).strip())
-            current_chunk = current_chunk[-overlap:] + [sentence]  # Retain overlap
-            current_length = sum(len(s) for s in current_chunk)  # Recalculate for overlap
+            if current_length >= min_length:
+                overlap = dynamic_overlap(current_chunk, default_overlap)
+                chunks.append(" ".join(current_chunk).strip())
+                current_chunk = overlap + [sentence]
+                current_length = sum(len(s) for s in current_chunk)
 
-    # Append any remaining sentences in the last chunk
     if current_chunk:
         chunks.append(" ".join(current_chunk).strip())
 
-    # Recursively process chunks that exceed max_length
     final_chunks = []
     for chunk in chunks:
         if len(chunk) > max_length:
-            final_chunks.extend(recursive_chunk_text(chunk, max_length, min_length, depth + 1, max_depth, overlap))
+            final_chunks.extend(recursive_chunk_text(chunk, max_length, min_length, depth + 1, max_depth, default_overlap))
         else:
             final_chunks.append(chunk)
 
     return final_chunks
 
-def chunk_by_paragraph(text, max_length=512, overlap=50):
-    """Attempts to chunk by paragraph, with additional splitting for long paragraphs and grouping smaller ones."""
+def chunk_by_paragraph(text, max_length=700, default_overlap=1):
     paragraphs = re.split(r'\n\s*\n|\n{2,}|\r\n\r\n', text.strip())
     paragraphs = [para.strip() for para in paragraphs if para.strip()]
     chunks = []
@@ -95,17 +101,19 @@ def chunk_by_paragraph(text, max_length=512, overlap=50):
             sentences = nltk.sent_tokenize(paragraph)
             sentence_chunk = []
             for sentence in sentences:
-                if sum(len(s) for s in sentence_chunk) + len(sentence) + len(sentence_chunk) <= max_length:
+                if sum(len(s) for s in sentence_chunk) + len(sentence) <= max_length:
                     sentence_chunk.append(sentence)
                 else:
+                    overlap = dynamic_overlap(sentence_chunk, default_overlap)
                     chunks.append(" ".join(sentence_chunk).strip())
-                    sentence_chunk = sentence_chunk[-overlap:] + [sentence]
+                    sentence_chunk = overlap + [sentence]
             if sentence_chunk:
                 chunks.append(" ".join(sentence_chunk).strip())
         else:
-            if sum(len(p) for p in current_chunk) + len(paragraph) + len(current_chunk) > max_length:
+            if sum(len(p) for p in current_chunk) + len(paragraph) > max_length:
+                overlap = dynamic_overlap(current_chunk, default_overlap)
                 chunks.append(" ".join(current_chunk).strip())
-                current_chunk = current_chunk[-overlap:]
+                current_chunk = overlap
             current_chunk.append(paragraph)
     
     if current_chunk:
@@ -113,8 +121,7 @@ def chunk_by_paragraph(text, max_length=512, overlap=50):
 
     return chunks
 
-def adaptive_chunk_text(text, default_max_length=512, overlap=50):
-    """Adaptive chunking based on sentence complexity and structure."""
+def adaptive_chunk_text(text, default_max_length=700, default_overlap=3):
     sentences = nltk.sent_tokenize(text)
     chunks = []
     current_chunk = []
@@ -129,44 +136,34 @@ def adaptive_chunk_text(text, default_max_length=512, overlap=50):
         else:
             max_length = default_max_length
 
-        if not current_chunk:
-            current_chunk.append(sentence)
-            current_length = sentence_length
-            continue
-
-        if current_length + sentence_length + 1 <= max_length:
+        if current_length + sentence_length <= max_length:
             current_chunk.append(sentence)
             current_length += sentence_length
         else:
-            if current_length < default_max_length // 4:
-                current_chunk.append(sentence)
-                current_length += sentence_length
-            else:
-                chunks.append(" ".join(current_chunk))
-                current_chunk = current_chunk[-overlap:] + [sentence]
-                current_length = sum(len(s.split()) for s in current_chunk)
+            overlap = dynamic_overlap(current_chunk, default_overlap)
+            chunks.append(" ".join(current_chunk))
+            current_chunk = overlap + [sentence]
+            current_length = sum(len(s.split()) for s in current_chunk)
 
     if current_chunk:
         chunks.append(" ".join(current_chunk))
 
     return chunks
 
-def chunk_by_tokens(text, max_tokens=512, buffer=20, overlap=50):
-    """Splits the input text into chunks based on a fixed number of tokens with a buffer, allowing some flexibility to avoid mid-sentence cuts."""
+def chunk_by_tokens(text, max_tokens=650, buffer=15, default_overlap=25):
     tokens = text.split()
     chunks = []
     current_chunk = []
     current_length = 0
 
     for token in tokens:
-        current_chunk.append(token)
-        current_length += 1
-
-        if current_length >= max_tokens:
-            if current_length - max_tokens <= buffer:
-                continue
+        if current_length < max_tokens:
+            current_chunk.append(token)
+            current_length += 1
+        else:
+            overlap = current_chunk[-default_overlap:]
             chunks.append(" ".join(current_chunk))
-            current_chunk = current_chunk[-overlap:]
+            current_chunk = overlap + [token]
             current_length = len(current_chunk)
 
     if current_chunk:
