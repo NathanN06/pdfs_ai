@@ -1,57 +1,69 @@
 {
+    "1": {
+        "query_text": "0-dimensional biomaterials show inductive properties.",
+        "precision": 0.0,
+        "recall": 0.0,
+        "embedding_similarity": 0.7134597897529602
+    },
     "36": {
         "query_text": "A deficiency of vitamin B12 increases blood levels of homocysteine.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.86130690574646
+        "embedding_similarity": 0.836571216583252
     },
     "54": {
         "query_text": "AMP-activated protein kinase (AMPK) activation increases inflammation-related fibrosis in the lungs.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.9829356670379639
+        "embedding_similarity": 0.8204993605613708
     },
-    "75": {
-        "query_text": "Active H. pylori urease has a polymeric structure that compromises two subunits, UreA and UreB.",
+    "124": {
+        "query_text": "Antiretroviral therapy reduces rates of tuberculosis across a broad range of CD4 strata.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.7025272250175476
+        "embedding_similarity": 0.9105450510978699
     },
-    "94": {
-        "query_text": "Albendazole is used to treat lymphatic filariasis.",
+    "163": {
+        "query_text": "Bariatric surgery has a positive impact on mental health.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.7094733715057373
+        "embedding_similarity": 0.9417107701301575
     },
-    "113": {
-        "query_text": "Angiotensin converting enzyme inhibitors are associated with increased risk for functional renal insufficiency.",
+    "183": {
+        "query_text": "Bone marrow cells contribute to adult macrophage compartments.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.897106409072876
-    },
-    "127": {
-        "query_text": "Arginine 90 in p150n is important for interaction with EB1.",
-        "precision": 0.0,
-        "recall": 0.0,
-        "embedding_similarity": 0.9887494444847107
-    },
-    "198": {
-        "query_text": "CCL19 is absent within dLNs.",
-        "precision": 0.0,
-        "recall": 0.0,
-        "embedding_similarity": 0.7529789805412292
+        "embedding_similarity": 0.867721438407898
     },
     "212": {
         "query_text": "CR is associated with higher methylation age.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.7295024991035461
+        "embedding_similarity": 0.7769889831542969
+    },
+    "213": {
+        "query_text": "CRP is not predictive of postoperative mortality following Coronary Artery Bypass Graft (CABG) surgery.",
+        "precision": 0.0,
+        "recall": 0.0,
+        "embedding_similarity": 0.8132166862487793
     },
     "232": {
         "query_text": "Cataract and trachoma are the primary cause of blindness in Southern Sudan.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.7225204706192017
+        "embedding_similarity": 0.7835395336151123
+    },
+    "237": {
+        "query_text": "Cells lacking clpC have a defect in sporulation efficiency in Bacillus subtilis.",
+        "precision": 0.0,
+        "recall": 0.0,
+        "embedding_similarity": 0.8240064382553101
+    },
+    "238": {
+        "query_text": "Cells undergoing methionine restriction may activate miRNAs.",
+        "precision": 0.0,
+        "recall": 0.0,
+        "embedding_similarity": 0.8103220462799072
     },
     "261": {
         "query_text": "Chronic aerobic exercise alters endothelial function, improving vasodilating mechanisms mediated by NO.",
@@ -59,185 +71,197 @@
         "recall": 0.0,
         "embedding_similarity": 0.7488576769828796
     },
-    "275": {
-        "query_text": "Combining phosphatidylinositide 3-kinase and MEK 1/2 inhibitors is effective at treating KRAS mutant tumors.",
-        "precision": 0.3333333333333333,
-        "recall": 0.3333333333333333,
-        "embedding_similarity": 0.9373558163642883
+    "269": {
+        "query_text": "Cold exposure reduces BAT recruitment.",
+        "precision": 0.0,
+        "recall": 0.0,
+        "embedding_similarity": 0.7499221563339233
     },
     "300": {
         "query_text": "Cytosolic proteins bind to iron-responsive elements on mRNAs coding for DMT1. Cytosolic proteins bind to iron-responsive elements on mRNAs coding for proteins involved in iron uptake.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.7255270481109619
+        "embedding_similarity": 0.7687292098999023
     },
     "314": {
         "query_text": "Deamination of cytidine to uridine on the minus strand of viral DNA results in catastrophic G-to-A mutations in the viral genome.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.7918933629989624
+        "embedding_similarity": 0.7935279607772827
     },
-    "324": {
-        "query_text": "Deleting Raptor reduces G-CSF levels.",
+    "343": {
+        "query_text": "Diabetic patients with acute coronary syndrome experience increased short-term and long-term risk for bleeding events.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.8226943016052246
+        "embedding_similarity": 0.9388644099235535
     },
     "362": {
         "query_text": "During the primary early antibody response activated B cells migrate toward the inner-and outer paracortical areas where oxysterol accumulation is generated by stromal cells.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.9562636613845825
+        "embedding_similarity": 0.8885891437530518
     },
     "388": {
         "query_text": "Ethanol stress decreases the expression of IBP in bacteria.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.9199929237365723
+        "embedding_similarity": 0.7360409498214722
+    },
+    "507": {
+        "query_text": "Helminths interfere with immune system control of macrophages activated by IL-4 favor Mycobacterium tuberculosis replication.",
+        "precision": 0.0,
+        "recall": 0.0,
+        "embedding_similarity": 0.8927953243255615
     },
     "508": {
         "query_text": "Hematopoietic Stem Cell purification reaches purity rate of up to 50%.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.7062157392501831
+        "embedding_similarity": 0.7195881009101868
     },
     "513": {
         "query_text": "High cardiopulmonary fitness causes increased mortality rate.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.9034574627876282
+        "embedding_similarity": 0.8298037052154541
     },
     "514": {
         "query_text": "High dietary calcium intakes are unnecessary for prevention of secondary hyperparathyroidism in subjects with 25(OH)D levels above 75 nmol/liter.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.958617091178894
+        "embedding_similarity": 0.9569158554077148
     },
-    "535": {
-        "query_text": "Hypertension is frequently observed in type 1 diabetes patients.",
+    "528": {
+        "query_text": "Human T-lymphotropic virus type-I-associated myelopathy / tropical spastic paraparesis (HAM/TSP) patients produce Immunoglobulin G (IgG) antibodies which cross-react with an immunodominant epitope in Tax.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.848650336265564
+        "embedding_similarity": 0.7676090002059937
+    },
+    "540": {
+        "query_text": "Hypothalamic glutamate neurotransmission is crucial to energy balance.",
+        "precision": 0.0,
+        "recall": 0.0,
+        "embedding_similarity": 0.7813665866851807
     },
     "551": {
         "query_text": "ITAM phosphorylation prevents the transfer of the T cell receptor (TCR) signal from the echo-domain to the cytoplasmic tail of the T cell receptor (TCR).",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.8927510380744934
+        "embedding_similarity": 0.8920096755027771
     },
-    "637": {
-        "query_text": "Input from  mental and physical health care professionals is effective at decreasing homelessness.",
+    "577": {
+        "query_text": "In mice, P. chabaudi parasites are able to proliferate faster early in infection when inoculated at lower numbers than when inoculated at high numbers.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.9311851263046265
+        "embedding_similarity": 0.8267936706542969
     },
-    "659": {
-        "query_text": "Ivermectin is used to treat lymphatic filariasis.",
+    "684": {
+        "query_text": "Lack of clpC does not affect sporulation efficiency in Bacillus subtilis cells.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.7993832230567932
+        "embedding_similarity": 0.8240064978599548
     },
-    "674": {
-        "query_text": "LDL cholesterol has no involvement in the development of cardiovascular disease.",
+    "700": {
+        "query_text": "Localization of PIN1 in the Arabidopsis embryo does not require VPS9a",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.7279115915298462
-    },
-    "691": {
-        "query_text": "Leukemia associated Rho guanine nucleotide-exchange factor represses RhoA in response to SRC activation.",
-        "precision": 0.0,
-        "recall": 0.0,
-        "embedding_similarity": 0.7577697038650513
+        "embedding_similarity": 0.8671793937683105
     },
     "702": {
         "query_text": "Localization of PIN1 in the roots of Arabidopsis does not require VPS9a",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.9704160094261169
+        "embedding_similarity": 0.8671793937683105
     },
-    "727": {
-        "query_text": "Ly6C hi monocytes have a lower inflammatory capacity compared to their Ly6C lo counterparts.",
+    "716": {
+        "query_text": "Low expression of miR7a exerts a biological function in testis.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.7019191384315491
-    },
-    "728": {
-        "query_text": "Ly6C hi monocytes have a lower inflammatory capacity than Ly6C lo monocytes.",
-        "precision": 0.0,
-        "recall": 0.0,
-        "embedding_similarity": 0.9102944135665894
+        "embedding_similarity": 0.7374589443206787
     },
     "744": {
         "query_text": "Macropinocytosis contributes to a cell's supply of amino acids via the intracellular uptake of protein.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.8221143484115601
+        "embedding_similarity": 0.7623889446258545
     },
     "756": {
         "query_text": "Many proteins in human cells can be post-translationally modified at lysine residues via acetylation.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.8560842275619507
+        "embedding_similarity": 0.8384507894515991
     },
     "759": {
         "query_text": "Mathematical models predict that using Artemisinin-based combination therapy over nongametocytocidal drugs have a dramatic impact in reducing malaria transmission.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.9610607028007507
+        "embedding_similarity": 0.9610607624053955
+    },
+    "770": {
+        "query_text": "Metastatic colorectal cancer treated with a single agent fluoropyrimidines resulted in reduced efficacy and lower quality of life when compared with oxaliplatin-based chemotherapy in elderly patients.",
+        "precision": 0.0,
+        "recall": 0.0,
+        "embedding_similarity": 0.7990210056304932
     },
     "781": {
         "query_text": "Mice that lack Interferon-\u03b3 or its receptor exhibit high resistance to experimental autoimmune myocarditis.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.8188495635986328
+        "embedding_similarity": 0.9015116095542908
     },
     "783": {
         "query_text": "Mice without IFN-\u03b3 or its receptor are resistant to EAM induced with \u03b1-MyHC/CFA.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.8292284607887268
+        "embedding_similarity": 0.8502339720726013
     },
-    "831": {
-        "query_text": "NF2 (Merlin) prevents phosphorylation and subsequent cytoplasmic sequestration of YAP in Drosophila.",
+    "823": {
+        "query_text": "N348I mutations cause resistance to zidovudine (AZT).",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.7338725924491882
+        "embedding_similarity": 0.770188570022583
     },
-    "873": {
-        "query_text": "Obesity is determined solely by environmental factors.",
+    "852": {
+        "query_text": "Non-invasive ventilation use should be decreased if there is inadequate response to conventional treatment.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.7516775727272034
+        "embedding_similarity": 0.7293146848678589
+    },
+    "859": {
+        "query_text": "Normal expression of RUNX1 has tumor-promoting effects.",
+        "precision": 0.0,
+        "recall": 0.0,
+        "embedding_similarity": 0.7679606676101685
+    },
+    "913": {
+        "query_text": "PPAR-RXRs are inhibited by PPAR ligands.",
+        "precision": 0.0,
+        "recall": 0.0,
+        "embedding_similarity": 0.7697097063064575
     },
     "914": {
         "query_text": "PPAR-RXRs can be activated by PPAR ligands.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.8939722776412964
-    },
-    "1024": {
-        "query_text": "Recurrent mutations occur frequently within CTCF anchor sites adjacent to oncogenes.",
-        "precision": 0.0,
-        "recall": 0.0,
-        "embedding_similarity": 0.7210206985473633
+        "embedding_similarity": 0.7697097063064575
     },
     "1041": {
         "query_text": "Replacement of histone H2A with H2A.Z slows gene activation in yeasts by stabilizing +1 nucleosomes.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.8172816038131714
-    },
-    "1121": {
-        "query_text": "Synaptic activity enhances local release of brain derived neurotrophic factor from postsynaptic dendrites.",
-        "precision": 0.0,
-        "recall": 0.0,
-        "embedding_similarity": 0.7711688280105591
+        "embedding_similarity": 0.8669058680534363
     },
     "1132": {
         "query_text": "TCR/CD3 microdomains are a required to induce the immunologic synapse to activate T cells.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.8137576580047607
+        "embedding_similarity": 0.7090768218040466
+    },
+    "1187": {
+        "query_text": "The YAP1 and TEAD complex tanslocates into the nucleus where it interacts with transcription factors and DNA-binding proteins that modulate target gene transcription.",
+        "precision": 0.0,
+        "recall": 0.0,
+        "embedding_similarity": 0.8631501793861389
     },
     "1196": {
         "query_text": "The availability of safe places to study is effective at decreasing homelessness.",
@@ -249,54 +273,42 @@
         "query_text": "The availability of safe places to study is not effective at decreasing homelessness.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.840275228023529
-    },
-    "1204": {
-        "query_text": "The combination of H3K4me3 and H3K79me2 is found in quiescent hair follicle stem cells.",
-        "precision": 0.0,
-        "recall": 0.0,
-        "embedding_similarity": 0.9579668045043945
+        "embedding_similarity": 0.8402751684188843
     },
     "1221": {
         "query_text": "The genomic aberrations found in matasteses are very similar to those found in the primary tumor.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.7141876220703125
+        "embedding_similarity": 0.8202458620071411
+    },
+    "1266": {
+        "query_text": "The risk of breast cancer among parous women increases with placental weight of pregnancies, and this association is strongest for premenopausal breast cancer.",
+        "precision": 0.0,
+        "recall": 0.0,
+        "embedding_similarity": 0.8540900945663452
     },
     "1278": {
         "query_text": "The treatment of cancer patients with co-IR blockade does not cause any adverse autoimmune events.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.7607871294021606
-    },
-    "1279": {
-        "query_text": "The treatment of cancer patients with co-IR blockade precipitates adverse autoimmune events.",
-        "precision": 0.0,
-        "recall": 0.0,
-        "embedding_similarity": 0.8616914749145508
+        "embedding_similarity": 0.7730745077133179
     },
     "1292": {
         "query_text": "There is no association between HNF4A mutations and diabetes risks.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.8428726196289062
-    },
-    "1337": {
-        "query_text": "Ubiquitin ligase UBC13 generates a K63-linked polyubiquitin moiety at PCNA K164.",
-        "precision": 0.0,
-        "recall": 0.0,
-        "embedding_similarity": 0.8958230018615723
+        "embedding_similarity": 0.7254583835601807
     },
     "1344": {
         "query_text": "Up-regulation of the p53 pathway and related molecular events casues cancer resistance and results in a significantly shortened lifespan marked by senescent cells and accelerated organismal aging.",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.9409468173980713
+        "embedding_similarity": 0.8488783836364746
     },
-    "1382": {
-        "query_text": "aPKCz causes tumour enhancement by affecting glutamine metabolism.",
+    "1395": {
+        "query_text": "p16INK4A accumulation is  linked to an abnormal wound response caused by the microinvasive step of advanced Oral Potentially Malignant Lesions (OPMLs).",
         "precision": 0.0,
         "recall": 0.0,
-        "embedding_similarity": 0.8648359775543213
+        "embedding_similarity": 0.774173378944397
     }
 }

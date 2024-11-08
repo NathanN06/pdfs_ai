@@ -1,6 +1,6 @@
 {
-    "average_precision": 0.20633333333333354,
-    "average_recall": 0.5718333333333333,
-    "average_similarity": 0.8223483051359654,
-    "high_similarity_low_performance_count": 50
+    "average_precision": 0.5421666666666667,
+    "average_recall": 0.5495,
+    "average_similarity": 0.7318318169315656,
+    "high_similarity_low_performance_count": 52
 }

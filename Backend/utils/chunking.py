@@ -43,26 +43,37 @@ def semantic_chunk_text(text, max_length=512, overlap=50):
     return chunks
 
 def recursive_chunk_text(text, max_length=512, min_length=100, depth=0, max_depth=5, overlap=50):
-    """Recursively chunk text into segments based on max_length, with adaptive splitting to preserve coherence and prevent excessive recursion."""
+    """Recursively chunk text into segments with adaptive splitting to maintain coherence and minimize recursion."""
+    # Base case: if text length is within limits or max recursion depth reached
     if len(text) <= max_length or depth >= max_depth:
         return [text]
 
+    # Tokenize sentences only once
     sentences = nltk.sent_tokenize(text)
     chunks = []
     current_chunk = []
+    current_length = 0  # Track length to avoid repeated sum calls
 
     for sentence in sentences:
-        if sum(len(s) for s in current_chunk) + len(sentence) + len(current_chunk) <= max_length:
+        sentence_length = len(sentence)
+        if current_length + sentence_length <= max_length:
             current_chunk.append(sentence)
+            current_length += sentence_length + 1  # +1 accounts for space between sentences
         else:
-            if len(" ".join(current_chunk)) < min_length and sentence:
+            # Ensure the chunk meets the minimum length
+            if current_length < min_length:
                 current_chunk.append(sentence)
+                current_length += sentence_length + 1
+            # Finalize current chunk
             chunks.append(" ".join(current_chunk).strip())
-            current_chunk = current_chunk[-overlap:] + [sentence]
+            current_chunk = current_chunk[-overlap:] + [sentence]  # Retain overlap
+            current_length = sum(len(s) for s in current_chunk)  # Recalculate for overlap
 
+    # Append any remaining sentences in the last chunk
     if current_chunk:
         chunks.append(" ".join(current_chunk).strip())
 
+    # Recursively process chunks that exceed max_length
     final_chunks = []
     for chunk in chunks:
         if len(chunk) > max_length:

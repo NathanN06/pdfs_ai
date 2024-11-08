@@ -1,4 +1,3 @@
-# document_loader.py
 import os
 import fitz  # PyMuPDF
 import json
@@ -8,7 +7,7 @@ from utils.chunking import (
 )
 from config import DATA_FOLDER, INDEX_FILENAME
 
-def load_documents(data_folder, chunk_strategy='character', chunk_size=512, overlap=0, save_file="preprocessed_documents.json"):
+def load_documents(data_folder, chunk_strategy='character', chunk_size=512, overlap=0, save_file=None):
     """
     Load and chunk documents from PDFs in the specified data folder using various chunking strategies.
 
@@ -22,6 +21,12 @@ def load_documents(data_folder, chunk_strategy='character', chunk_size=512, over
     Returns:
         list: List of chunked document texts.
     """
+    # Set default save path if not provided
+    if save_file is None:
+        save_dir = "/Users/nathannguyen/Documents/RAG_BOT_1/Backend/Data/Preprocessed_Data"
+        os.makedirs(save_dir, exist_ok=True)
+        save_file = os.path.join(save_dir, "preprocessed_documents.json")
+
     documents = []
 
     if os.path.exists(save_file):

@@ -1,9 +1,11 @@
-# indexing_service.py
 import os
 import faiss
 from services.embedding_service import embed_documents
 from services.document_loader import load_documents
-from config import DATA_FOLDER, INDEX_FILENAME
+from config import DATA_FOLDER
+
+# Specify the full path for the index file
+INDEX_FILENAME = "/Users/nathannguyen/Documents/RAG_BOT_1/Backend/index/document_index.faiss"
 
 def index_embeddings(embeddings, nlist=None, index_type='Flat'):
     """
