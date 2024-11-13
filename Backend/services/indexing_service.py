@@ -2,10 +2,10 @@ import os
 import faiss
 from services.embedding_service import embed_documents
 from services.document_loader import load_documents
-from config import DATA_FOLDER
+from config import DATA_FOLDER, INDEX_FOLDER, INDEX_FILENAME
 
-# Specify the full path for the index file
-INDEX_FILENAME = "/Users/nathannguyen/Documents/RAG_BOT_1/Backend/index/document_index.faiss"
+# Define the full path for the FAISS index file
+INDEX_PATH = os.path.join(INDEX_FOLDER, INDEX_FILENAME)
 
 def index_embeddings(embeddings, nlist=None, index_type='Flat'):
     """
@@ -25,28 +25,25 @@ def index_embeddings(embeddings, nlist=None, index_type='Flat'):
     if index_type == 'Flat':
         index = faiss.IndexFlatL2(dimension)
     else:
-        # Set default nlist if not provided
         if nlist is None:
             nlist = min(10, len(embeddings) // 2)
         
-        # Use IVFFlat or other clustered index types for larger datasets
         quantizer = faiss.IndexFlatL2(dimension)
         if index_type == 'IVFFlat':
             index = faiss.IndexIVFFlat(quantizer, dimension, nlist, faiss.METRIC_L2)
         elif index_type == 'IVFPQ':
-            index = faiss.IndexIVFPQ(quantizer, dimension, nlist, 8)  # Example with 8 subquantizers
+            index = faiss.IndexIVFPQ(quantizer, dimension, nlist, 8)
         elif index_type == 'IVFSQ':
             index = faiss.IndexIVFSQ(quantizer, dimension, nlist, faiss.METRIC_L2)
         else:
             raise ValueError(f"Unsupported index type: {index_type}")
 
-        # Train the index for clustering-based indexes
         index.train(embeddings)
     
     index.add(embeddings)
     return index
 
-def save_index(index, filename=INDEX_FILENAME):
+def save_index(index, filename=INDEX_PATH):
     """
     Saves the FAISS index to the specified file.
 
@@ -57,7 +54,7 @@ def save_index(index, filename=INDEX_FILENAME):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     faiss.write_index(index, filename)
 
-def load_index(filename=INDEX_FILENAME):
+def load_index(filename=INDEX_PATH):
     """
     Loads the FAISS index from the specified file.
 
@@ -65,13 +62,13 @@ def load_index(filename=INDEX_FILENAME):
         filename (str): Path to load the index file.
 
     Returns:
-        faiss.IndexIVFFlat: Loaded FAISS index.
+        faiss.Index: Loaded FAISS index.
     """
     if not os.path.exists(filename):
         raise FileNotFoundError(f"The FAISS index file was not found at: {filename}")
     return faiss.read_index(filename)
 
-def create_and_save_index(data_folder=DATA_FOLDER, index_filename=INDEX_FILENAME, chunk_strategy='token', chunk_size=512, overlap=0):
+def create_and_save_index(data_folder=DATA_FOLDER, index_filename=INDEX_PATH, chunk_strategy='token', chunk_size=512, overlap=0):
     """
     Loads documents, creates embeddings, indexes them, and saves the index.
 
@@ -82,7 +79,6 @@ def create_and_save_index(data_folder=DATA_FOLDER, index_filename=INDEX_FILENAME
         chunk_size (int): The size limit for each chunk.
         overlap (int): The overlap size for document chunking.
     """
-    # Pass the overlap parameter to load_documents
     documents = load_documents(data_folder, chunk_strategy=chunk_strategy, chunk_size=chunk_size, overlap=overlap)
     embeddings = embed_documents(documents)
     index = index_embeddings(embeddings)

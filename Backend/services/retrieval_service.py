@@ -58,37 +58,39 @@ def retrieve_documents(index, query_embedding, documents, user_query=None, k=10,
     if query_embedding.ndim == 1:
         query_embedding = query_embedding.reshape(1, -1)
 
-    # Selectively expand the query based on query length or structure
+    # Expand the query if it is short, using synonyms and related terms
     expanded_query_embedding = None
     if user_query and len(user_query.split()) < 5:  # Expand only for short queries
         expanded_query = expand_query(user_query)
         expanded_query_embedding = embed_query(expanded_query)
-    
-    # Adaptive weighting for original and expanded embeddings
-    initial_sim_threshold = 0.8  # Set a similarity threshold
-    if expanded_query_embedding is not None and expanded_query_embedding.ndim == 1:
-        expanded_query_embedding = expanded_query_embedding.reshape(1, -1)
+        if expanded_query_embedding.ndim == 1:
+            expanded_query_embedding = expanded_query_embedding.reshape(1, -1)
 
-    # Retrieve a sample to test initial similarity before weighting
+    # Calculate an initial similarity with a few top documents to set adaptive weights
     _, initial_indices = index.search(query_embedding, k=3)
-    initial_docs = [documents[i] for i in initial_indices[0] if i < len(documents) and len(documents[i]) > 2]
+    initial_docs = [documents[i] for i in initial_indices[0] if 0 <= i < len(documents) and len(documents[i]) > 2]
 
-    # Only proceed if initial_docs has embeddings
+    # Calculate initial similarity if there are documents to compare
+    initial_sim = 0
     if initial_docs:
         initial_sim = np.mean([
-            cosine_similarity([query_embedding], [doc[2]])[0][0] 
+            cosine_similarity(query_embedding, [doc[2]])[0][0]
             for doc in initial_docs if len(doc) > 2
         ])
-    else:
-        initial_sim = 0  # Fallback if no documents with embeddings are found
 
-    # Adjust weight dynamically based on initial similarity score
+    # Set weights based on the initial similarity threshold
+    initial_sim_threshold = 0.8
     weight_original = 0.9 if initial_sim >= initial_sim_threshold else 0.7
     weight_expanded = 1 - weight_original
-    combined_embedding = (weight_original * query_embedding + 
-                          weight_expanded * expanded_query_embedding if expanded_query_embedding is not None else query_embedding)
 
-    # Step 1: Initial retrieval from FAISS with larger k for more coverage
+    # Construct the combined embedding adaptively based on the presence of expanded embedding
+    if expanded_query_embedding is not None:
+        combined_embedding = (weight_original * query_embedding +
+                              weight_expanded * expanded_query_embedding)
+    else:
+        combined_embedding = query_embedding
+
+    # Step 1: Perform the initial retrieval from FAISS with larger k for more coverage
     _, indices = index.search(combined_embedding, k)
     initial_retrieved_docs = [documents[i] for i in indices[0] if 0 <= i < len(documents)]
 
